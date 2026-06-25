@@ -1,4 +1,4 @@
-import { SquareCheck as CheckSquare, TrendingUp, FolderOpen, Users, Activity, CircleAlert as AlertCircle, Clock } from 'lucide-react';
+import { CheckSquare, TrendingUp, FolderOpen, Users, Activity, AlertCircle, Clock } from 'lucide-react';
 import { useCRM } from '../context/CRMContext';
 import { useLang } from '../context/LangContext';
 import { isOverdue, isToday, formatDate, daysBetween, todayStr } from '../utils/storage';
