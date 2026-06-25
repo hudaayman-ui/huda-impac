@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS variables for light/dark theming ── */
+:root {
+  --bg-base:           #030712;   /* gray-950 */
+  --bg-surface:        #111827;   /* gray-900 */
+  --bg-surface-el:     #1f2937;   /* gray-800 */
+  --bg-card:           rgba(17,24,39,0.5);
+  --bg-modal:          #111827;
+  --bg-input:          #1f2937;
+  --border-color:      rgba(55,65,81,0.5);   /* gray-700/50 */
+  --border-hover:      rgba(75,85,99,0.8);
+  --text-primary:      #f9fafb;   /* gray-50 */
+  --text-secondary:    #9ca3af;   /* gray-400 */
+  --text-muted:        #6b7280;   /* gray-500 */
+  --btn-secondary-bg:  #374151;
+  --btn-secondary-hover: #4b5563;
+  --btn-secondary-text: #d1d5db;
+}
+
+html.light {
+  --bg-base:           #f8fafc;   /* slate-50 */
+  --bg-surface:        #ffffff;
+  --bg-surface-el:     #f1f5f9;   /* slate-100 */
+  --bg-card:           rgba(255,255,255,0.9);
+  --bg-modal:          #ffffff;
+  --bg-input:          #f8fafc;
+  --border-color:      rgba(203,213,225,0.8);  /* slate-300 */
+  --border-hover:      rgba(148,163,184,0.9);
+  --text-primary:      #0f172a;   /* slate-900 */
+  --text-secondary:    #475569;   /* slate-600 */
+  --text-muted:        #94a3b8;   /* slate-400 */
+  --btn-secondary-bg:  #e2e8f0;
+  --btn-secondary-hover: #cbd5e1;
+  --btn-secondary-text: #334155;
+}
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  html[dir="rtl"] {
+    font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    background-color: var(--bg-base);
+    color: var(--text-primary);
+    transition: background-color 0.2s, color 0.2s;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #374151 transparent;
+  }
+
+  *::-webkit-scrollbar { width: 5px; height: 5px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb { background: #374151; border-radius: 10px; }
+
+  html.light *::-webkit-scrollbar-thumb { background: #cbd5e1; }
+}
+
+/* ── Theme-aware utility classes ── */
+@layer components {
+  .crm-text-primary   { color: var(--text-primary); }
+  .crm-text-secondary { color: var(--text-secondary); }
+  .crm-text-muted     { color: var(--text-muted); }
+
+  .crm-surface         { background-color: var(--bg-surface); }
+  .crm-surface-elevated{ background-color: var(--bg-surface-el); }
+  .crm-bg-base         { background-color: var(--bg-base); }
+
+  .crm-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+  }
+  .crm-card-inner {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+  }
+  .crm-modal {
+    background-color: var(--bg-modal);
+    border: 1px solid var(--border-color);
+  }
+
+  .crm-border { border-color: var(--border-color); }
+  .crm-border-hover:hover { border-color: var(--border-hover); }
+  .hover\:crm-border-hover:hover { border-color: var(--border-hover) !important; }
+
+  .crm-input {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+  }
+  .crm-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+  .crm-input option {
+    background-color: var(--bg-modal);
+    color: var(--text-primary);
+  }
+
+  .crm-btn-secondary {
+    background-color: var(--btn-secondary-bg);
+    color: var(--btn-secondary-text);
+  }
+  .crm-btn-secondary:hover {
+    background-color: var(--btn-secondary-hover);
+  }
+
+  .hover\:crm-text-primary:hover { color: var(--text-primary); }
+  .hover\:crm-surface-elevated:hover { background-color: var(--bg-surface-el); }
+}
+
+/* ── Sidebar dark always (regardless of theme) ── */
+.sidebar-dark {
+  background-color: #111827 !important;
+  border-color: rgba(55,65,81,0.5) !important;
+}
+
+@layer utilities {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.2s ease-out;
+}
