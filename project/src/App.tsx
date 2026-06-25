@@ -16,8 +16,15 @@ import Settings from './pages/Settings';
 import { Deal } from './types';
 
 function CRMApp() {
-  const { data, addProject, addToast } = useCRM();
-  const { lang, dir } = useLang();
+  const { data, addProject, addToast, loading } = useCRM();
+  const { lang, setLang, dir } = useLang();
+
+  // Sync language from Supabase settings when loaded
+  useEffect(() => {
+    if (data.settings.language && data.settings.language !== lang) {
+      setLang(data.settings.language);
+    }
+  }, [data.settings.language, lang, setLang]);
 
   // Navigation history stack for back-button support
   const [viewStack, setViewStack] = useState<Array<{ view: ActiveView; clientId?: string }>>([
@@ -81,6 +88,17 @@ function CRMApp() {
     handleNavigate('projects');
   };
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen" style={{ backgroundColor: 'var(--bg-base)', color: 'var(--text-primary)' }}>
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <p className="crm-text-secondary text-sm">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className="flex h-screen overflow-hidden"
@@ -139,17 +157,9 @@ function CRMApp() {
 }
 
 export default function App() {
-  const savedLang = (() => {
-    try {
-      const raw = localStorage.getItem('impact_crm_data');
-      if (raw) return JSON.parse(raw)?.settings?.language || 'en';
-    } catch { }
-    return 'en';
-  })();
-
   return (
     <CRMProvider>
-      <LangProvider initialLang={savedLang as 'ar' | 'en'}>
+      <LangProvider initialLang="en">
         <CRMApp />
       </LangProvider>
     </CRMProvider>

@@ -1,12 +1,9 @@
 import React, { useState, useRef } from 'react';
-import {
-  Settings as SettingsIcon, User, Bell, TrendingUp, CheckSquare, Tag, Users,
-  Upload, Download, Trash2, Palette, RotateCcw, Plus, X, GripVertical, Camera
-} from 'lucide-react';
+import { Settings as SettingsIcon, User, Bell, TrendingUp, SquareCheck as CheckSquare, Tag, Users, Upload, Download, Trash2, Palette, RotateCcw, Plus, X, GripVertical, Camera } from 'lucide-react';
 import { useCRM } from '../context/CRMContext';
 import { useLang } from '../context/LangContext';
 import { AppSettings, PipelineStageConfig, TaskPriority, TeamMember } from '../types';
-import { generateId, getStorageUsage } from '../utils/storage';
+import { generateId } from '../utils/storage';
 import ConfirmDialog from '../components/ConfirmDialog';
 
 type Section = 'general' | 'profile' | 'notifications' | 'pipeline' | 'tasks' | 'dropdowns' | 'team' | 'importexport' | 'data' | 'appearance';
@@ -735,9 +732,8 @@ function DataSection({ data, onClearTasks, onClearDeals, onClearClients, onReset
     <div>
       <SectionHeader title="Data Management" />
       <div className="crm-card rounded-2xl p-5 mb-4">
-        <p className="crm-text-secondary text-sm mb-1">Storage Usage</p>
-        <p className="text-2xl font-bold crm-text-primary">{getStorageUsage()}</p>
-        <p className="crm-text-muted text-xs mt-1">localStorage</p>
+        <p className="crm-text-secondary text-sm mb-1">Database</p>
+        <p className="crm-text-muted text-xs mt-1">Supabase PostgreSQL</p>
       </div>
       <div className="space-y-3">
         {[

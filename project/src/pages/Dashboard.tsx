@@ -1,5 +1,4 @@
-import React from 'react';
-import { CheckSquare, TrendingUp, FolderOpen, Users, Activity, AlertCircle, Clock } from 'lucide-react';
+import { SquareCheck as CheckSquare, TrendingUp, FolderOpen, Users, Activity, CircleAlert as AlertCircle, Clock } from 'lucide-react';
 import { useCRM } from '../context/CRMContext';
 import { useLang } from '../context/LangContext';
 import { isOverdue, isToday, formatDate, daysBetween, todayStr } from '../utils/storage';
@@ -22,7 +21,7 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
 
   const inactiveDeals = data.deals.filter(d => {
     const stage = settings.pipelineStages.find(s => s.id === d.stageId);
-    if (stage?.type === 'won' || stage?.type === 'lost') return false;
+    if (stage?.type === 'lost') return false;
     return daysBetween(d.updatedAt, today) >= settings.notifications.noActivityDealThreshold;
   });
 
@@ -38,21 +37,18 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
 
   const pipelineSummary = settings.pipelineStages.map(stage => {
     const deals = data.deals.filter(d => d.stageId === stage.id);
-    const total = deals.reduce((sum, d) => sum + d.value, 0);
+    const total = deals.reduce((sum, d) => sum + (d.probability || 0), 0);
     return { stage, count: deals.length, total };
   }).filter(s => s.count > 0);
 
   const totalPipeline = data.deals
     .filter(d => {
       const stage = settings.pipelineStages.find(s => s.id === d.stageId);
-      return stage?.type !== 'won' && stage?.type !== 'lost';
+      return stage?.type !== 'lost';
     })
-    .reduce((sum, d) => sum + d.value, 0);
+    .reduce((sum, d) => sum + (d.probability || 0), 0);
 
   const recentActivity = data.activityLog.slice(0, 10);
-
-  const formatCurrency = (v: number) =>
-    `${settings.currency} ${v.toLocaleString()}`;
 
   return (
     <div className="p-6 space-y-6">
@@ -80,9 +76,9 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
         />
         <SummaryCard
           icon={<TrendingUp size={20} />}
-          label={lang === 'ar' ? 'إجمالي المبيعات' : 'Pipeline Value'}
-          value={formatCurrency(totalPipeline)}
-          subValue={`${data.deals.filter(d => settings.pipelineStages.find(s=>s.id===d.stageId)?.type!=='won' && settings.pipelineStages.find(s=>s.id===d.stageId)?.type!=='lost').length} ${lang === 'ar' ? 'صفقات' : 'deals'}`}
+          label={lang === 'ar' ? 'إجمالي الاحتمالات' : 'Pipeline Probability'}
+          value={`${totalPipeline}%`}
+          subValue={`${data.deals.filter(d => settings.pipelineStages.find(s=>s.id===d.stageId)?.type!=='lost').length} ${lang === 'ar' ? 'صفقات' : 'deals'}`}
           color="emerald"
           onClick={() => onNavigate('pipeline')}
         />
@@ -188,9 +184,9 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
               {pipelineSummary.map(({ stage, count, total }) => (
                 <div key={stage.id} className="flex items-center gap-3">
                   <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: stage.color }} />
-                  <span className="text-gray-300 text-sm flex-1">{lang === 'ar' ? stage.nameAr : stage.nameEn}</span>
+                  <span className="text-gray-300 text-sm flex-1">{stage.nameEn}</span>
                   <span className="text-gray-500 text-xs">{count}</span>
-                  <span className="text-white text-sm font-medium">{formatCurrency(total)}</span>
+                  <span className="text-white text-sm font-medium">{total}%</span>
                 </div>
               ))}
               {pipelineSummary.length === 0 && (
@@ -213,7 +209,6 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                 <span className="px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full text-xs">{inactiveDeals.length}</span>
               </h3>
               {inactiveDeals.slice(0, 3).map(deal => {
-                const client = data.clients.find(c => c.id === deal.clientId);
                 const days = daysBetween(deal.updatedAt, today);
                 return (
                   <div key={deal.id} className="py-2 border-b border-yellow-500/10 last:border-0">
@@ -234,7 +229,6 @@ export default function Dashboard({ onNavigate }: DashboardProps) {
                 <span className="px-1.5 py-0.5 bg-orange-500/20 text-orange-400 rounded-full text-xs">{behindProjects.length}</span>
               </h3>
               {behindProjects.map(p => {
-                const client = data.clients.find(c => c.id === p.clientId);
                 const days = daysBetween(p.expectedEndDate, today);
                 return (
                   <div key={p.id} className="py-2 border-b border-orange-500/10 last:border-0">
